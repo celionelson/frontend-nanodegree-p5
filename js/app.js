@@ -15,6 +15,7 @@ var locations = [
 	}
 ];
 
+/*Add a marker on the map*/
 var addMarker = function(data, timeout) {
 	window.setTimeout(function() {
 		var marker = new google.maps.Marker({
@@ -32,6 +33,7 @@ var ViewModel = function() {
 
 	this.markers = [];
 
+	// Create and add a marker in the markers array for each location
 	var i = 0;
 	locations.forEach(function(location) {
 		self.markers.push(addMarker(location, i*700));
@@ -40,7 +42,7 @@ var ViewModel = function() {
 };
 
 var map;
-
+/*Initialize map. This function is called once the google map API is fully loaded*/
 var initMap = function() {
 	var mapParams = {
 			center: {lat: -34.397, lng: 150.644},
@@ -48,6 +50,7 @@ var initMap = function() {
 		};
 	map = new google.maps.Map(document.getElementById('map'), mapParams);
 
+	// Initialize the ViewModel
 	ko.applyBindings(new ViewModel());
 };
 
