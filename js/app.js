@@ -8,21 +8,23 @@ var locations = [
 	},
 	{
 		"name": "nameTest2",
-		"address": {lat: -34.497, lng: 150.644},
+		"address": {lat: -34.497, lng: 150},
 		"category": "categoryTest",
 		"tags": "[]",
 		"link": "linkTest"
 	}
 ];
 
-var addMarker = function(data) {
-	var marker = new google.maps.Marker({
-      position: data.address,
-      map: map,
-      animation: google.maps.Animation.DROP
-    })
-    return marker
-}
+var addMarker = function(data, timeout) {
+	window.setTimeout(function() {
+		var marker = new google.maps.Marker({
+	      position: data.address,
+	      map: map,
+	      animation: google.maps.Animation.DROP
+	    })
+	    return marker;
+	}, timeout);
+};
 
 var ViewModel = function() {
 
@@ -30,9 +32,9 @@ var ViewModel = function() {
 
 	this.markers = [];
 
-	locations.forEach(function(location) {
-		self.markers.push(addMarker(location));
-	});
+	for (var i = 0; i < locations.length; i++) {
+		self.markers.push(addMarker(locations[i], i*700));
+	};
 };
 
 var map;
