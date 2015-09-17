@@ -32,9 +32,11 @@ var ViewModel = function() {
 
 	this.markers = [];
 
-	for (var i = 0; i < locations.length; i++) {
-		self.markers.push(addMarker(locations[i], i*700));
-	};
+	var i = 0;
+	locations.forEach(function(location) {
+		self.markers.push(addMarker(location, i*700));
+		i++;
+	});
 };
 
 var map;
