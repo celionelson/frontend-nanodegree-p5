@@ -15,25 +15,26 @@ var locations = [
 	}
 ];
 
-/*Add a marker on the map*/
+/* Add a marker on the map */
 var addMarker = function(data, timeout) {
 
-	/*Set timeout for markers not to drop at the same time*/
+	/* Set timeout for markers not to drop at the same time */
 	window.setTimeout(function() {
 
-		/*Dertermine lat and lng based on the address of the location with google's geocode function*/
+		/* Dertermine lat and lng based on the address of the location with google's geocode function */
 		geocoder.geocode( { 'address': data.address}, function(results, status) {
 
-			/*Check status of request and create marker if OK*/
+			// Check status of request and create marker if OK 
 	      	if (status == google.maps.GeocoderStatus.OK) {
 				var marker = new google.maps.Marker({
 			      	position: results[0].geometry.location,
 			      	map: map,
+			      	title: data.name,
 			      	animation: google.maps.Animation.DROP
 			    });
 			    return marker;
 			} else {
-				/*Alert in case the geocode convertion failed*/
+				// Alert in case the geocode convertion failed 
 				alert("Geocode was not successful for the following reason: " + status);
 			};
 		});
@@ -57,7 +58,7 @@ var ViewModel = function() {
 var map;
 var geocoder;
 
-/*Initialize map. This function is called once the google map API is fully loaded*/
+/* Initialize map. This function is called once the google map API is fully loaded */
 var initMap = function() {
 	var mapParams = {
 			center: {lat : 34.2257255, lng: -77.9447102},
