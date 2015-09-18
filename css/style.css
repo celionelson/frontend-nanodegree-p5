@@ -24,9 +24,8 @@ body {
   height: 83vh;
 }
 
-.form-control {
-  width: 50%;
-  margin-top: 8px;
+.searchbar {
+  margin: 8px 0 8px 0;
 }
 
 /* collapsed sidebar styles */
