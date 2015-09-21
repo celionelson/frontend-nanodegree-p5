@@ -109,14 +109,16 @@ var currentInfowindow = null;
 /* Initialize map. This function is called once the google map API is fully loaded */
 var initMap = function() {
 	var mapParams = {
-			center: {lat : 34.2257255, lng: -77.9007102},
+			center: {lat : 34.2057255, lng: -77.8900102},
     		zoom: 13
 		};
 	map = new google.maps.Map(document.getElementById('map'), mapParams),
 	geocoder = new google.maps.Geocoder();
 
-	// Initialize the ViewModel
-	ko.applyBindings(new ViewModel());
+	// Initialize the ViewModel only when the map is fully loaded
+	google.maps.event.addListenerOnce(map,'idle', function(e) {
+	   ko.applyBindings(new ViewModel());
+	});
 };
 
 $(document).ready(function() {
