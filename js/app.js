@@ -1,4 +1,4 @@
-var locations = [
+var initialLocations = [
 	{
 		"name": "Winter Park Elementary School",
 		"address": "204 N MacMillan Ave, Wilmington, NC 28403",
@@ -10,21 +10,21 @@ var locations = [
 		"name": "Hugh MacRae Park",
 		"address": "1799 S College Rd, Wilmington, NC 28403",
 		"category": "Park",
-		"tags": "['recreation', 'park', 'playground', 'baseball', 'tennis']",
+		"tags": "['recreation','park','playground','baseball','tennis']",
 		"link": "http://nhcgov.com"
 	},
 	{
 		"name": "Harris Teeter",
 		"address": "822 S College Rd, Wilmington, NC 28403",
 		"category": "Groceries",
-		"tags": "['groceries', 'food', 'market']",
+		"tags": "['groceries','food','market']",
 		"link": "http://locations.harristeeter.com"
 	},
 	{
 		"name": "University of North Carolina Wilmington",
 		"address": "603 S College Rd, Wilmington, NC 28403",
 		"category": "categoryTest",
-		"tags": "['education', 'university','studies']",
+		"tags": "['education','university','studies']",
 		"link": "http://uncw.edu"
 	},
 	{
@@ -38,6 +38,8 @@ var locations = [
 
 /* Add a marker on the map */
 var addMarker = function(data, timeout) {
+
+	var marker;
 
 	/* Set timeout for markers not to drop at the same time */
 	window.setTimeout(function() {
@@ -78,28 +80,64 @@ var addMarker = function(data, timeout) {
 				    currentInfowindow = infowindow;
 				});
 
-			    return {"marker": marker, "infowindow": infowindow};
+			    marker.metadata = {name: data.name, tags: data.tags};
+			    console.log('marker inside geocode = '+marker)
+			    return marker;
 
 			} else {
 				// Alert in case the geocode convertion failed 
 				alert("Geocode was not successful for the following reason: " + status);
 			};
 		});
+		
 	}, timeout);
+	
+	console.log('Marker before return = '+marker)
+};
+
+var search = function(str,markers) {
+	var matchingMarkers = [],
+		push = false;
+
+	for (marker in markers) {
+		console.log(markers);
+		if (marker.metadata.name.search(str) != -1) {
+			push = true;
+		} else {
+			for (tag in marker.metadata.tags) {
+				if (tag.seach(str) != -1) {
+					push = true;
+				}
+			}
+		};
+
+		if (push) {
+			matchingMarkers.push(marker);
+			push = false;
+		};
+	};
+
+	return matchingMarkers;
 };
 
 var ViewModel = function() {
 
 	var self = this;
 
-	this.markers = [];
+	this.markerList = [];
 
 	// Create and add a marker in the markers array for each location
 	var i = 0;
-	locations.forEach(function(location) {
-		self.markers.push(addMarker(location, i*200));
+	initialLocations.forEach(function(location) {
+		self.markerList.push(addMarker(location, i*200));
 		i++;
 	});
+
+	this.searchStr = ko.observable();
+
+	console.log('Marker list = ' +this.markerList);
+	this.currentLocations = ko.observableArray(search(self.searchStr, self.markerList));
+
 };
 
 var map;
@@ -115,7 +153,7 @@ var initMap = function() {
 	map = new google.maps.Map(document.getElementById('map'), mapParams),
 	geocoder = new google.maps.Geocoder();
 
-	// Initialize the ViewModel only when the map is fully loaded
+	// Initialize the ViewModel only when the map is fully loaded and idle
 	google.maps.event.addListenerOnce(map,'idle', function(e) {
 	   ko.applyBindings(new ViewModel());
 	});
