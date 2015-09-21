@@ -1,17 +1,38 @@
 var locations = [
 	{
-		"name": "Walmart",
-		"address": "8035 Market St, Wilmington, NC",
-		"category": "categoryTest",
-		"tags": "[]",
-		"link": "linkTest"
+		"name": "Winter Park Elementary School",
+		"address": "204 N MacMillan Ave, Wilmington, NC 28403",
+		"category": "School",
+		"tags": "['education','school']",
+		"link": "http://nhcs.net"
 	},
 	{
-		"name": "Wrightsville Beach",
-		"address": "23 E Salisbury St, Wrightsville Beach, NC",
+		"name": "Hugh MacRae Park",
+		"address": "1799 S College Rd, Wilmington, NC 28403",
+		"category": "Park",
+		"tags": "['recreation', 'park', 'playground', 'baseball', 'tennis']",
+		"link": "http://nhcgov.com"
+	},
+	{
+		"name": "Harris Teeter",
+		"address": "822 S College Rd, Wilmington, NC 28403",
+		"category": "Groceries",
+		"tags": "['groceries', 'food', 'market']",
+		"link": "http://locations.harristeeter.com"
+	},
+	{
+		"name": "University of North Carolina Wilmington",
+		"address": "603 S College Rd, Wilmington, NC 28403",
 		"category": "categoryTest",
-		"tags": "[]",
-		"link": "linkTest"
+		"tags": "['education', 'university','studies']",
+		"link": "http://uncw.edu"
+	},
+	{
+		"name": "Venture Church",
+		"address": "2024 Independence Blvd, Wilmington, NC 28403",
+		"category": "Church",
+		"tags": "['church','service','worship']",
+		"link": "http://jointheventure.com"
 	}
 ];
 
@@ -32,7 +53,33 @@ var addMarker = function(data, timeout) {
 			      	title: data.name,
 			      	animation: google.maps.Animation.DROP
 			    });
-			    return marker;
+
+				// Create infowindow and its content corresponding to marker clicked on
+				var formatted_address = results[0].formatted_address,
+					streetviewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=150x100&location=' + formatted_address + '',
+					contentStr = '<div>' +
+					'<h3>' + data.name + '</h3>' +
+					'<p>' + formatted_address + '<br>' +
+					'Website : <a href="' + data.link + '">' + data.link + '</a></p>' + 
+					'<img src="' + streetviewUrl + '" alt="streetview image" class="img-thumbnail img-responsive center-block">' +
+					'</div>';
+
+				var infowindow = new google.maps.InfoWindow({
+					content: contentStr
+				});
+
+				// Open/Close infowindow on click
+			    marker.addListener('click', function() {
+				    if (currentInfowindow != null) {
+				    	currentInfowindow.close();	
+				    };
+			
+				    infowindow.open(map, marker);
+				    currentInfowindow = infowindow;
+				});
+
+			    return {"marker": marker, "infowindow": infowindow};
+
 			} else {
 				// Alert in case the geocode convertion failed 
 				alert("Geocode was not successful for the following reason: " + status);
@@ -50,19 +97,20 @@ var ViewModel = function() {
 	// Create and add a marker in the markers array for each location
 	var i = 0;
 	locations.forEach(function(location) {
-		self.markers.push(addMarker(location, i*2000));
+		self.markers.push(addMarker(location, i*200));
 		i++;
 	});
 };
 
 var map;
 var geocoder;
+var currentInfowindow = null;
 
 /* Initialize map. This function is called once the google map API is fully loaded */
 var initMap = function() {
 	var mapParams = {
-			center: {lat : 34.2257255, lng: -77.9447102},
-    		zoom: 10
+			center: {lat : 34.2257255, lng: -77.9007102},
+    		zoom: 13
 		};
 	map = new google.maps.Map(document.getElementById('map'), mapParams),
 	geocoder = new google.maps.Geocoder();
