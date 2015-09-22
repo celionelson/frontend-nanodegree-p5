@@ -1,4 +1,4 @@
-var locations = [
+var initialLocations = [
 	{
 		"name": "Winter Park Elementary School",
 		"address": "204 N MacMillan Ave, Wilmington, NC 28403",
@@ -12,7 +12,7 @@ var locations = [
 		"address": "1799 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "Park",
-		"tags": "['recreation', 'park', 'playground', 'baseball', 'tennis']",
+		"tags": "['recreation','park','playground','baseball','tennis']",
 		"link": "http://nhcgov.com"
 	},
 	{
@@ -20,7 +20,7 @@ var locations = [
 		"address": "822 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "Groceries",
-		"tags": "['groceries', 'food', 'market']",
+		"tags": "['groceries','food','market']",
 		"link": "http://locations.harristeeter.com"
 	},
 	{
@@ -28,7 +28,7 @@ var locations = [
 		"address": "603 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "categoryTest",
-		"tags": "['education', 'university','studies']",
+		"tags": "['education','university','studies']",
 		"link": "http://uncw.edu"
 	},
 	{
@@ -44,7 +44,7 @@ var locations = [
 /* Dertermine lat and lng based on the address of the location with google's geocode function */
 var geocode = function() {
 
-	locations.forEach(function(location) {
+	initialLocations.forEach(function(location) {
 
 		var addressUrl = location.address.replace(' ', '+'),
 			googleapiKey = 'AIzaSyA2FFND0yTl6LbApiZxjut09JyBxcBe_Jo',
@@ -100,21 +100,52 @@ var addMarker = function(data) {
 	    currentInfowindow = infowindow;
 	});
 
+    marker.metadata = {name: data.name, tags: data.tags};
+
 	return marker;
+};
+
+var search = function(str,markers) {
+	var matchingMarkers = [],
+		push = false;
+
+	for (i in markers) {
+		if (markers[i].title.search(str) != -1) {
+			push = true;
+		} else {
+			for (j in markers[i].metadata.tags) {
+				if (markers[i].metadata.tags[j].search(str) != -1) {
+					push = true;
+				}
+			}
+		};
+
+		if (push) {
+			matchingMarkers.push(marker);
+			push = false;
+		};
+	};
+
+	console.log(matchingMarkers);
+	return matchingMarkers;
 };
 
 var ViewModel = function() {
 
 	var self = this;
 
-	this.markers = [];
+	this.markerList = [];
 
 	// Create and add a marker in the markers array for each location
 	var i = 0;
-	locations.forEach(function(location) {
-		self.markers.push(addMarker(location));
+	initialLocations.forEach(function(location) {
+		self.markerList.push(addMarker(location));
 		i++;
 	});
+
+	this.searchStr = ko.observable();
+
+	this.currentLocations = ko.observableArray(search(self.searchStr, self.markerList));
 };
 
 var map;
@@ -129,7 +160,7 @@ var initMap = function() {
 		};
 	map = new google.maps.Map(document.getElementById('map'), mapParams),
 
-	// Initialize the ViewModel only when the map is fully loaded
+	// Initialize the ViewModel only when the map is fully loaded and idle
 	google.maps.event.addListenerOnce(map,'idle', function(e) {
 	   ko.applyBindings(new ViewModel());
 	});
