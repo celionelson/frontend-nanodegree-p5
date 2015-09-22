@@ -126,6 +126,12 @@ var ViewModel = function() {
 			matchingMarkers = [],
 			match;
 
+		// Expand dropdown menu
+		if (str != '') {
+			$("#dropdown-menu").attr("aria-expanded", true);
+			$("#dropdown-list").addClass("open");
+		};
+
 		// Iterate over all the markers to search for matching titles and/or tags
 		markers.forEach(function(marker) {
 			
