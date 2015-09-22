@@ -4,7 +4,7 @@ var initialLocations = [
 		"address": "204 N MacMillan Ave, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "School",
-		"tags": "['education','school']",
+		"tags": ['education','school'],
 		"link": "http://nhcs.net"
 	},
 	{
@@ -12,7 +12,7 @@ var initialLocations = [
 		"address": "1799 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "Park",
-		"tags": "['recreation','park','playground','baseball','tennis']",
+		"tags": ['recreation','park','playground','baseball','tennis'],
 		"link": "http://nhcgov.com"
 	},
 	{
@@ -20,7 +20,7 @@ var initialLocations = [
 		"address": "822 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "Groceries",
-		"tags": "['groceries','food','market']",
+		"tags": ['groceries','food','market'],
 		"link": "http://locations.harristeeter.com"
 	},
 	{
@@ -28,7 +28,7 @@ var initialLocations = [
 		"address": "603 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "categoryTest",
-		"tags": "['education','university','studies']",
+		"tags": ['education','university','studies'],
 		"link": "http://uncw.edu"
 	},
 	{
@@ -36,7 +36,7 @@ var initialLocations = [
 		"address": "2024 Independence Blvd, Wilmington, NC 28403",
 		"latLng": "",
 		"category": "Church",
-		"tags": "['church','service','worship']",
+		"tags": ['church','service','worship'],
 		"link": "http://jointheventure.com"
 	}
 ];
@@ -100,52 +100,57 @@ var addMarker = function(data) {
 	    currentInfowindow = infowindow;
 	});
 
-    marker.metadata = {name: data.name, tags: data.tags};
+    marker.metadata = {tags: data.tags};
 
 	return marker;
-};
-
-var search = function(str,markers) {
-	var matchingMarkers = [],
-		push = false;
-
-	for (i in markers) {
-		if (markers[i].title.search(str) != -1) {
-			push = true;
-		} else {
-			for (j in markers[i].metadata.tags) {
-				if (markers[i].metadata.tags[j].search(str) != -1) {
-					push = true;
-				}
-			}
-		};
-
-		if (push) {
-			matchingMarkers.push(marker);
-			push = false;
-		};
-	};
-
-	console.log(matchingMarkers);
-	return matchingMarkers;
 };
 
 var ViewModel = function() {
 
 	var self = this;
 
-	this.markerList = [];
+	this.markerList = ko.observableArray([]);
 
 	// Create and add a marker in the markers array for each location
-	var i = 0;
 	initialLocations.forEach(function(location) {
 		self.markerList.push(addMarker(location));
-		i++;
 	});
 
-	this.searchStr = ko.observable();
+	// Input updated as the user writes
+	this.searchStr = ko.observable('');
 
-	this.currentLocations = ko.observableArray(search(self.searchStr, self.markerList));
+	// Look for the markers matching the searchStr
+	this.currentMarkers = ko.computed(function() {
+		var markers = this.markerList(),
+			str = this.searchStr().toLowerCase(),
+			matchingMarkers = [],
+			match;
+
+		// Iterate over all the markers to search for matching titles and/or tags
+		markers.forEach(function(marker) {
+			
+			match = false;
+			marker.setVisible(true);
+
+			if (str == '' || marker.title.toLowerCase().search(str) != -1) {
+				match = true;
+			} else {
+				marker.metadata.tags.forEach(function(tag) {
+					if (tag.toLowerCase().search(str) != -1) {
+						match = true;
+					}
+				})
+			};
+
+			if (match) {
+				matchingMarkers.push(marker);
+			} else {
+				marker.setVisible(false);
+			}
+		})
+
+		return matchingMarkers;
+	}, this);
 };
 
 var map;
