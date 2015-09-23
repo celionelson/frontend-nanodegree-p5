@@ -157,14 +157,17 @@ var addMarker = function(data, icon) {
 		content: contentStr
 	});
 
+	// Close current marker when infowindow is closed by user
+	infowindow.addListener('closeclick', function() {
+		closeCurrentMarker();
+	});
+
 	// Store tags, infowindow and icon in marker's metadata
 	marker.metadata = {tags: data.tags, icon: icon, infowindow: infowindow};
 
 	// Open marker on click
     marker.addListener('click', function() {
-
     	openMarker(marker);
-
 	});
 
 	return marker;
@@ -172,15 +175,18 @@ var addMarker = function(data, icon) {
 
 /* Open infowindow and change icon on selected marker */
 var openMarker = function(marker) {
-	if (currentMarker != null) {
-    	currentMarker.metadata.infowindow.close();
-    	currentMarker.setIcon(currentMarker.metadata.icon.normal);	
-    };
-
+	closeCurrentMarker();
     marker.metadata.infowindow.open(map, marker);
     marker.setIcon(marker.metadata.icon.selected);
     currentMarker = marker;
 };
+
+var closeCurrentMarker = function() {
+	if (currentMarker != null) {
+    	currentMarker.metadata.infowindow.close();
+    	currentMarker.setIcon(currentMarker.metadata.icon.normal);	
+    };
+}
 
 var ViewModel = function() {
 
@@ -211,11 +217,8 @@ var ViewModel = function() {
 			matchingMarkers = [],
 			match;
 
-		// Close infowindow currently open
-		if (currentMarker != null) {
-	    	currentMarker.metadata.infowindow.close();
-    		currentMarker.setIcon(currentMarker.metadata.icon.normal);		
-	    };
+		// Close marker currently open
+		closeCurrentMarker();
 
 		// Expand dropdown menu
 		if (str != '') {
