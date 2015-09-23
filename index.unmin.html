@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Neighborhood Map</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100vh;
+      }
+    </style>
+
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+
+      <div class="container-fluid">
+
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+
+          <button id="mobile-button" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#key-locations-search" aria-expanded="false">
+
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+
+          </button>
+
+          <a class="navbar-brand" href="#">Neighborhood Map</a>
+
+        </div>
+
+        <!-- Collect the nav form and dropdown list -->
+        <div class="collapse navbar-collapse" id="key-locations-search">
+
+          <ul class="nav navbar-nav">
+
+            <form data-bind="submit: showResults" class="navbar-form navbar-left" role="search">
+
+              <div class="form-group">
+
+                <input type="text" data-bind="textInput: searchStr" class="form-control" placeholder="Search">
+
+              </div>
+
+              <button type="submit" class="btn btn-default">Submit</button>
+
+            </form>
+
+            <li id="dropdown-list" class="dropdown">
+
+              <a href="#" id="dropdown-menu" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Key locations <span class="caret"></span></a>
+
+              <ul data-bind="foreach: currentMarkers" class="dropdown-menu">
+
+                <li><a data-bind="text: title, click: selectMarker" href="#"></a></li>
+                <!-- <li role="separator" class="divider"></li> -->
+
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav> <!-- /Navigation -->
+
+    <!-- Page content with map -->
+    <div class="container-fluid">
+      <div class="row">
+        <div>
+          <div id="map"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script async defer src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2FFND0yTl6LbApiZxjut09JyBxcBe_Jo&callback=initMap">
+    </script>
+    <script async defer src="bower_components/knockout/dist/knockout.js"></script>
+    <script async defer src="js/app.min.js"></script>
+  </body>
+</html>
