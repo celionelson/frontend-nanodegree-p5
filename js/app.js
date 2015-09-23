@@ -38,6 +38,22 @@ var initialLocations = [
 		"category": "Church",
 		"tags": ['church','service','worship'],
 		"link": "http://jointheventure.com"
+	},
+	{
+		"name": "Wild Wing Cafe",
+		"address": "1331 Military Cutoff Rd, Wilmington, NC 28405",
+		"latLng": "",
+		"category": "Fast Food",
+		"tags": ['fast food','restaurant','food'],
+		"link": "http://wildwingcafe.com"
+	},
+	{
+		"name": "Wilmington International Airport",
+		"address": "1740 Airport Blvd, Suite 12, Wilmington, NC 28405",
+		"latLng": "",
+		"category": "Airport",
+		"tags": ['airport','plane','flight','travel'],
+		"link": "http://www.flyilm.com/"
 	}
 ];
 
@@ -104,7 +120,7 @@ var markerCategories = [
 			normal: "images/cat-9.png",
 			selected: "images/cat-9s.png"
 		}
-	}
+	},
 ];
 
 /* Dertermine lat and lng based on the address of the location with google's geocode function */
