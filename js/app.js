@@ -90,19 +90,26 @@ var addMarker = function(data) {
 		content: contentStr
 	});
 
-	// Open/Close infowindow on click
+	// Open infowindow on click
     marker.addListener('click', function() {
-	    if (currentInfowindow != null) {
-	    	currentInfowindow.close();	
-	    };
 
-	    infowindow.open(map, marker);
-	    currentInfowindow = infowindow;
+    	openInfowindow(marker, infowindow);
+
 	});
 
     marker.metadata = {tags: data.tags, infowindow: infowindow};
 
 	return marker;
+};
+
+/* Open infowindow on selected marker */
+var openInfowindow = function(marker, infowindow) {
+	if (currentInfowindow != null) {
+    	currentInfowindow.close();	
+    };
+
+    infowindow.open(map, marker);
+    currentInfowindow = infowindow;
 };
 
 var ViewModel = function() {
@@ -175,9 +182,22 @@ var ViewModel = function() {
 		map.setCenter(marker.position);
 
 		// Open the infowindow of this marker
-		marker.metadata.infowindow.open(map, marker);
-		currentInfowindow = marker.metadata.infowindow;
+		openInfowindow(marker, marker.metadata.infowindow);
 	};
+
+	selectMarker = function() {
+		
+		// Collapse navbar
+		$("#mobile-button").click();
+
+		var marker = this;
+
+		// Center the map on this marker
+		map.setCenter(marker.position);
+
+		// Open the infowindow of this marker
+		openInfowindow(marker, marker.metadata.infowindow);
+	}
 };
 
 var map;
