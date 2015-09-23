@@ -100,7 +100,7 @@ var addMarker = function(data) {
 	    currentInfowindow = infowindow;
 	});
 
-    marker.metadata = {tags: data.tags};
+    marker.metadata = {tags: data.tags, infowindow: infowindow};
 
 	return marker;
 };
@@ -125,6 +125,11 @@ var ViewModel = function() {
 			str = this.searchStr().toLowerCase(),
 			matchingMarkers = [],
 			match;
+
+		// Close infowindow currently open
+		if (currentInfowindow != null) {
+	    	currentInfowindow.close();	
+	    };
 
 		// Expand dropdown menu
 		if (str != '') {
@@ -157,6 +162,22 @@ var ViewModel = function() {
 
 		return matchingMarkers;
 	}, this);
+
+	// Function triggered by the form's submit button
+	this.showResults = function() {
+		// Collapse navbar
+		$("#mobile-button").click();
+
+		// Retrieve the first of the current markers matching the search
+		var marker = self.currentMarkers()[0];
+
+		// Center the map on this marker
+		map.setCenter(marker.position);
+
+		// Open the infowindow of this marker
+		marker.metadata.infowindow.open(map, marker);
+		currentInfowindow = marker.metadata.infowindow;
+	};
 };
 
 var map;
