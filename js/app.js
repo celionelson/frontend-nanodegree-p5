@@ -264,6 +264,7 @@ var ViewModel = function() {
 		openMarker(marker);
 	};
 
+	// Function triggered by click on items in dropdown key locations
 	selectMarker = function() {
 		
 		// Collapse navbar
