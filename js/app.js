@@ -175,9 +175,16 @@ var addMarker = function(data, icon) {
 
 /* Open infowindow and change icon on selected marker */
 var openMarker = function(marker) {
+	// Close everything related to the current marker
 	closeCurrentMarker();
+
+	// Open the new marker's infowindow
     marker.metadata.infowindow.open(map, marker);
+
+    // Set new marker's icon to selected state
     marker.setIcon(marker.metadata.icon.selected);
+    
+	// Set the new marker as current marker
     currentMarker = marker;
 };
 
@@ -274,9 +281,6 @@ var ViewModel = function() {
 		$("#mobile-button").click();
 
 		var marker = this;
-
-		// Center the map on this marker
-		map.setCenter(marker.position);
 
 		// Open this marker
 		openMarker(marker);
