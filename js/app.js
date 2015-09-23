@@ -283,9 +283,6 @@ var ViewModel = function() {
 		// Retrieve the first of the current markers matching the search
 		var marker = self.currentMarkers()[0];
 
-		// Center the map on this marker
-		map.setCenter(marker.position);
-
 		// Open this marker
 		openMarker(marker);
 	};
