@@ -214,7 +214,7 @@ var ViewModel = function() {
 		// Close infowindow currently open
 		if (currentMarker != null) {
 	    	currentMarker.metadata.infowindow.close();
-    		currentMarker.setIcon = currentMarker.metadata.icon.normal;		
+    		currentMarker.setIcon(currentMarker.metadata.icon.normal);		
 	    };
 
 		// Expand dropdown menu
