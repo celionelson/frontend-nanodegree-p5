@@ -3,7 +3,7 @@ var initialLocations = [
 		"name": "Winter Park Elementary School",
 		"address": "204 N MacMillan Ave, Wilmington, NC 28403",
 		"latLng": "",
-		"category": "School",
+		"category": "Education",
 		"tags": ['education','school'],
 		"link": "http://nhcs.net"
 	},
@@ -11,7 +11,7 @@ var initialLocations = [
 		"name": "Hugh MacRae Park",
 		"address": "1799 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
-		"category": "Park",
+		"category": "Parks and sports",
 		"tags": ['recreation','park','playground','baseball','tennis'],
 		"link": "http://nhcgov.com"
 	},
@@ -27,7 +27,7 @@ var initialLocations = [
 		"name": "University of North Carolina Wilmington",
 		"address": "603 S College Rd, Wilmington, NC 28403",
 		"latLng": "",
-		"category": "categoryTest",
+		"category": "Education",
 		"tags": ['education','university','studies'],
 		"link": "http://uncw.edu"
 	},
@@ -38,6 +38,72 @@ var initialLocations = [
 		"category": "Church",
 		"tags": ['church','service','worship'],
 		"link": "http://jointheventure.com"
+	}
+];
+
+var markerCategories = [
+	{
+		"category": "Coffee",
+		"icon": {
+			normal: "images/cat-1.png",
+			selected: "images/cat-1s.png"
+		}
+	},
+	{
+		"category": "Groceries",
+		"icon": {
+			normal: "images/cat-2.png",
+			selected: "images/cat-2s.png"
+		}
+	},
+	{
+		"category": "Airport",
+		"icon": {
+			normal: "images/cat-3.png",
+			selected: "images/cat-3s.png"
+		}
+	},
+	{
+		"category": "Nightlife",
+		"icon": {
+			normal: "images/cat-4.png",
+			selected: "images/cat-4s.png"
+		}
+	},
+	{
+		"category": "Transportation",
+		"icon": {
+			normal: "images/cat-5.png",
+			selected: "images/cat-5s.png"
+		}
+	},
+	{
+		"category": "Fast Food",
+		"icon": {
+			normal: "images/cat-6.png",
+			selected: "images/cat-6s.png"
+		}
+	},
+	{
+		"category": "Church",
+		"icon": {
+			normal: "images/cat-7.png",
+			selected: "images/cat-7s.png"
+		}
+	},
+	{
+		"category": "Education",
+		"icon": {
+			normal: "images/cat-8.png",
+			selected: "images/cat-8s.png"
+		}
+	},
+	{
+		"category": "Parks and sports",
+		"icon": {
+			normal: "images/cat-9.png",
+			selected: "images/cat-9s.png"
+		}
 	}
 ];
 
@@ -67,14 +133,15 @@ var geocode = function() {
 geocode();
 
 /* Add a marker on the map */
-var addMarker = function(data) {
+var addMarker = function(data, icon) {
 
 	// Create marker
 	var marker = new google.maps.Marker({
       	position: data.latLng,
       	map: map,
       	title: data.name,
-      	animation: google.maps.Animation.DROP
+      	animation: google.maps.Animation.DROP,
+      	icon: icon.normal
     });
 
 	// Create infowindow and its content corresponding to marker clicked on
@@ -90,26 +157,29 @@ var addMarker = function(data) {
 		content: contentStr
 	});
 
-	// Open infowindow on click
+	// Store tags, infowindow and icon in marker's metadata
+	marker.metadata = {tags: data.tags, icon: icon, infowindow: infowindow};
+
+	// Open marker on click
     marker.addListener('click', function() {
 
-    	openInfowindow(marker, infowindow);
+    	openMarker(marker);
 
 	});
-
-    marker.metadata = {tags: data.tags, infowindow: infowindow};
 
 	return marker;
 };
 
-/* Open infowindow on selected marker */
-var openInfowindow = function(marker, infowindow) {
-	if (currentInfowindow != null) {
-    	currentInfowindow.close();	
+/* Open infowindow and change icon on selected marker */
+var openMarker = function(marker) {
+	if (currentMarker != null) {
+    	currentMarker.metadata.infowindow.close();
+    	currentMarker.setIcon(currentMarker.metadata.icon.normal);	
     };
 
-    infowindow.open(map, marker);
-    currentInfowindow = infowindow;
+    marker.metadata.infowindow.open(map, marker);
+    marker.setIcon(marker.metadata.icon.selected);
+    currentMarker = marker;
 };
 
 var ViewModel = function() {
@@ -120,7 +190,15 @@ var ViewModel = function() {
 
 	// Create and add a marker in the markers array for each location
 	initialLocations.forEach(function(location) {
-		self.markerList.push(addMarker(location));
+		var icon;
+
+		markerCategories.forEach(function(markerCategory) {
+			if (location.category == markerCategory.category) {
+				icon = markerCategory.icon;
+			}
+		})
+
+		self.markerList.push(addMarker(location, icon));
 	});
 
 	// Input updated as the user writes
@@ -134,8 +212,9 @@ var ViewModel = function() {
 			match;
 
 		// Close infowindow currently open
-		if (currentInfowindow != null) {
-	    	currentInfowindow.close();	
+		if (currentMarker != null) {
+	    	currentMarker.metadata.infowindow.close();
+    		currentMarker.setIcon = currentMarker.metadata.icon.normal;		
 	    };
 
 		// Expand dropdown menu
@@ -181,8 +260,8 @@ var ViewModel = function() {
 		// Center the map on this marker
 		map.setCenter(marker.position);
 
-		// Open the infowindow of this marker
-		openInfowindow(marker, marker.metadata.infowindow);
+		// Open this marker
+		openMarker(marker);
 	};
 
 	selectMarker = function() {
@@ -195,13 +274,13 @@ var ViewModel = function() {
 		// Center the map on this marker
 		map.setCenter(marker.position);
 
-		// Open the infowindow of this marker
-		openInfowindow(marker, marker.metadata.infowindow);
+		// Open this marker
+		openMarker(marker);
 	}
 };
 
 var map;
-var currentInfowindow = null;
+var currentMarker = null;
 
 /* Initialize map. This function is called once the google map API is fully loaded */
 var initMap = function() {
