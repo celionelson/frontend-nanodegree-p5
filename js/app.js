@@ -160,17 +160,9 @@ var addMarker = function(data, icon) {
       	icon: icon.normal
     });
 
-	// Create infowindow and its content corresponding to marker clicked on
-	var streetviewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=150x100&location=' + data.address + '',
-		contentStr = '<div>' +
-		'<h3>' + data.name + '</h3>' +
-		'<p>' + data.address + '<br>' +
-		'Website : <a href="' + data.link + '">' + data.link + '</a></p>' + 
-		'<img src="' + streetviewUrl + '" alt="streetview image" class="img-thumbnail img-responsive center-block">' +
-		'</div>';
-
+	// Create infowindow
 	var infowindow = new google.maps.InfoWindow({
-		content: contentStr
+		content: ''
 	});
 
 	// Close current marker when infowindow is closed by user
@@ -186,7 +178,48 @@ var addMarker = function(data, icon) {
     	openMarker(marker);
 	});
 
+	editInfowindow(marker, data);
+
 	return marker;
+};
+
+var editInfowindow = function(marker, data) {
+	var wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.name + '&format=json&callback=wikiCallBack';
+	var wikiElem = '';
+
+    $.ajax({
+        url: wikiUrl,
+        dataType: "jsonp",
+        success: function (response) {
+            var articleList = response[1];
+            if (articleList.length === 0) {
+               wikiElem = 'no resources found'; 
+            };
+
+            for (var i = 0; i < articleList.length; i++) {
+                articleStr = articleList[i];
+                var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+                wikiElem += '<li><a href="' + url + '">' + articleStr + '</a></li>';
+            };
+
+            // Create infowindow's content corresponding to marker clicked on
+			var streetviewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=150x100&location=' + data.address + '',
+				contentStr = '<div>' +
+					'<h3>' + data.name + '</h3>' +
+					'<p>' + data.address + '<br>' +
+					'Website : <a href="' + data.link + '">' + data.link + '</a></p>' + 
+					'<img src="' + streetviewUrl + '" alt="streetview image" class="img-thumbnail img-responsive">' +
+					'<div>' +
+						'<h4>Wikipedia articles</h4>' +
+						'<ul>' +
+							wikiElem +
+						'</ul>' +
+					'</div>' +
+				'</div>';
+
+			marker.metadata.infowindow.setContent(contentStr);
+        }
+    });
 };
 
 /* Open infowindow and change icon on selected marker */
