@@ -141,7 +141,7 @@ var geocode = function() {
 			} else {
 				// Alert in case the geocode convertion failed 
 				alert("Geocode was not successful for the following reason: " + status);
-			};
+			}
 		});
 	});
 };
@@ -191,20 +191,22 @@ var editInfowindow = function(marker, data) {
         url: wikiUrl,
         dataType: "jsonp",
         success: function (response) {
-            var articleList = response[1];
+            var articleList = response[1],
+            	articleStr;
+
             if (articleList.length === 0) {
                wikiElem = 'no resources found'; 
-            };
+            }
 
             for (var i = 0; i < articleList.length; i++) {
                 articleStr = articleList[i];
                 var url = 'http://en.wikipedia.org/wiki/' + articleStr;
                 wikiElem += '<li><a href="' + url + '">' + articleStr + '</a></li>';
-            };
+            }
 
             // Create infowindow's content corresponding to marker clicked on
 			var streetviewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=150x100&location=' + data.address + '',
-				contentStr = '<div>' +
+				contentStr = '<div class="scrollFix">' +
 					'<h3>' + data.name + '</h3>' +
 					'<p>' + data.address + '<br>' +
 					'Website : <a href="' + data.link + '">' + data.link + '</a></p>' + 
@@ -238,11 +240,11 @@ var openMarker = function(marker) {
 };
 
 var closeCurrentMarker = function() {
-	if (currentMarker != null) {
+	if (currentMarker !== null) {
     	currentMarker.metadata.infowindow.close();
     	currentMarker.setIcon(currentMarker.metadata.icon.normal);	
-    };
-}
+    }
+};
 
 var ViewModel = function() {
 
@@ -258,7 +260,7 @@ var ViewModel = function() {
 			if (location.category == markerCategory.category) {
 				icon = markerCategory.icon;
 			}
-		})
+		});
 
 		self.markerList.push(addMarker(location, icon));
 	});
@@ -277,10 +279,10 @@ var ViewModel = function() {
 		closeCurrentMarker();
 
 		// Expand dropdown menu
-		if (str != '') {
+		if (str !== '') {
 			$("#dropdown-menu").attr("aria-expanded", true);
 			$("#dropdown-list").addClass("open");
-		};
+		}
 
 		// Iterate over all the markers to search for matching titles and/or tags
 		markers.forEach(function(marker) {
@@ -288,22 +290,22 @@ var ViewModel = function() {
 			match = false;
 			marker.setVisible(true);
 
-			if (str == '' || marker.title.toLowerCase().search(str) != -1) {
+			if (str === '' || marker.title.toLowerCase().search(str) != -1) {
 				match = true;
 			} else {
 				marker.metadata.tags.forEach(function(tag) {
 					if (tag.toLowerCase().search(str) != -1) {
 						match = true;
 					}
-				})
-			};
+				});
+			}
 
 			if (match) {
 				matchingMarkers.push(marker);
 			} else {
 				marker.setVisible(false);
 			}
-		})
+		});
 
 		return matchingMarkers;
 	}, this);
@@ -321,7 +323,7 @@ var ViewModel = function() {
 	};
 
 	// Function triggered by click on items in dropdown key locations
-	selectMarker = function() {
+	this.selectMarker = function() {
 		
 		// Collapse navbar
 		$("#mobile-button").click();
@@ -330,7 +332,7 @@ var ViewModel = function() {
 
 		// Open this marker
 		openMarker(marker);
-	}
+	};
 };
 
 var map;
