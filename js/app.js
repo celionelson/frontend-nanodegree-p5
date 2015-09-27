@@ -217,6 +217,7 @@ var editInfowindow = function(marker, data) {
 							wikiElem +
 						'</ul>' +
 					'</div>' +
+					'<a href="http://www.freepik.com">Markers Designed by Freepik</a>' +
 				'</div>';
 
 			marker.metadata.infowindow.setContent(contentStr);
