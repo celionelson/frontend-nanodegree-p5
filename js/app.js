@@ -140,7 +140,7 @@ var geocode = function() {
 				location.latLng = data.results[0].geometry.location;
 			} else {
 				// Alert in case the geocode convertion failed 
-				alert("Geocode was not successful for the following reason: " + status);
+				alert("Geocode was not successful for the following reason: " + data.status + ". - Related to : " + location.address);
 			}
 		});
 	});
