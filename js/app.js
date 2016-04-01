@@ -129,7 +129,7 @@ var geocode = function() {
 	initialLocations.forEach(function(location) {
 
 		var addressUrl = location.address.replace(' ', '+'),
-			googleapiKey = 'AIzaSyA2FFND0yTl6LbApiZxjut09JyBxcBe_Jo',
+			googleapiKey = 'AIzaSyDU4vcO88eXPWlGmOUDwsZ_kzHGsT66h-Q',
 			geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + addressUrl + '&key=' + googleapiKey;
 		
 		// Send request to google's geocode api
